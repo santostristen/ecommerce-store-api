@@ -1,4 +1,6 @@
 const express = require('express')
+const passport = require('passport')
+
 const customErrors = require('../../lib/custom_errors')
 
 const handle404 = customErrors.handle404
@@ -10,5 +12,9 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 router.get('/products', requireToken, (req, res, next) => {
-  
+  Purchase.find({ owner: req.user._id })
+    .then(purchases => {
+      res.json({ purchases })
+    })
+    .catch(next)
 })
