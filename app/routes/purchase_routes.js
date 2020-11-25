@@ -23,7 +23,7 @@ router.patch('/purchases/:id', requireToken, removeBlanks, (req, res, next) => {
   // block attempts to change ownership
   delete req.body.purchase.owner
 
-  Listing.findById(req.params.id)
+  Purchase.findById(req.params.id)
     .then(handle404)
     .then(listing => {
       // throw an error if attempt to update when not the owner
