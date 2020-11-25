@@ -12,15 +12,11 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 router.get('/products', requireToken, (req, res, next) => {
-<<<<<<< HEAD:app/routes/purchase_routes.js
   Purchase.find({ owner: req.user._id })
     .then(purchases => {
       res.json({ purchases })
     })
     .catch(next)
-})
-=======
-
 })
 
 // SHOW PURCHASE
@@ -49,4 +45,3 @@ router.delete('/purchases/:id', requireToken, (req, res, next) => {
     // send to error handler on errors
     .catch(next)
 })
->>>>>>> Added delete/show routes:app/routes/product_routes.js
