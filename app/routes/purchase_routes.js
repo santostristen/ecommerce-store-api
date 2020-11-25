@@ -1,6 +1,8 @@
 const express = require('express')
 const passport = require('passport')
 
+const Purchase = require('../models/purchase')
+
 
 const customErrors = require('../../lib/custom_errors')
 
@@ -77,4 +79,4 @@ router.delete('/purchases/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-
+module.exports = router
