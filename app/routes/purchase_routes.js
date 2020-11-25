@@ -11,16 +11,24 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
-router.get('/products', requireToken, (req, res, next) => {
-<<<<<<< HEAD:app/routes/purchase_routes.js
+
+router.get('/purchases', requireToken, (req, res, next) => {
   Purchase.find({ owner: req.user._id })
     .then(purchases => {
       res.json({ purchases })
     })
     .catch(next)
 })
-=======
 
+
+router.post('/purchases', requireToken, (req, res, next) => {
+  req.body.purchase.owner = req.user.id
+
+  Purchase.create(req.body.purchase)
+    .then(purchase => {
+      res.status(201).json({ purchase: purchase.toObject() })
+    })
+    .catch(next)
 })
 
 // SHOW PURCHASE
@@ -35,6 +43,7 @@ router.get('/purchases/:id', requireToken, (req, res, next) => {
     // if error, pass to handler
     .catch(next)
 })
+
 // DELETE PURCHASE
 router.delete('/purchases/:id', requireToken, (req, res, next) => {
   Purchase.findById(req.params.id)
@@ -49,4 +58,4 @@ router.delete('/purchases/:id', requireToken, (req, res, next) => {
     // send to error handler on errors
     .catch(next)
 })
->>>>>>> Added delete/show routes:app/routes/product_routes.js
+
