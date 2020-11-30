@@ -1,16 +1,12 @@
 const mongoose = require('mongoose')
 
 const purchaseSchema = new mongoose.Schema({
-  name: {
-    type: String,
+  productTally: {
+    type: Object,
     required: true
   },
-  price: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
+  totalPrice: {
+    type: Number,
     required: true
   },
   owner: {
