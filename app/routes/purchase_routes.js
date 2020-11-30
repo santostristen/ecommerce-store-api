@@ -3,7 +3,6 @@ const passport = require('passport')
 
 const Purchase = require('../models/purchase')
 
-
 const customErrors = require('../../lib/custom_errors')
 
 const handle404 = customErrors.handle404
@@ -28,12 +27,12 @@ router.patch('/purchases/:id', requireToken, removeBlanks, (req, res, next) => {
 
   Purchase.findById(req.params.id)
     .then(handle404)
-    .then(listing => {
+    .then(purchase => {
       // throw an error if attempt to update when not the owner
       requireOwnership(req, purchase)
 
       // pass the result
-      return listing.updateOne(req.body.purchase)
+      return purchase.updateOne(req.body.purchase)
     })
     // success -> status 204
     .then(() => res.sendStatus(204))
