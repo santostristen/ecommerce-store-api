@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 
-const purchaseSchema = new mongoose.Schema({
-  name: {
+const reviewSchema = new mongoose.Schema({
+  head: {
     type: String,
     required: true
   },
-  price: {
+  body: {
     type: String,
     required: true
   },
-  description: {
+  rating: {
     type: String,
     required: true
   },
@@ -22,4 +22,4 @@ const purchaseSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Purchase', purchaseSchema)
+module.exports = mongoose.model('Review', reviewSchema)
