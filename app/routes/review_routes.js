@@ -1,7 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 
-const Review = require('../models/review')
+const Product = require('../models/product')
 
 const customErrors = require('../../lib/custom_errors')
 
@@ -13,68 +13,77 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
-router.get('/reviews', requireToken, (req, res, next) => {
-  Review.find({ owner: req.user._id })
-    .then(reviews => {
-      res.json({ reviews })
-    })
-    .catch(next)
-})
-
-router.patch('/reviews/:id', requireToken, removeBlanks, (req, res, next) => {
-  // block attempts to change ownership
-  delete req.body.review.owner
-
-  Review.findById(req.params.id)
+router.post('/reviews', requireToken, removeBlanks, (req, res, next) => {
+  // extract the review from the incoming request's data (req.body)
+  const reviewData = req.body.review
+  // extract the product's id that we plan to add a review for
+  const productId = reviewData.productId
+  // Find the product document with the id of `productId`
+  Product.findById(productId)
+    // throw (cause) a new DocumentNotFoundError to occur, if we couldn't find
+    // the product. Otherwise, pass the product along to the next `then`
     .then(handle404)
-    .then(review => {
-      // throw an error if attempt to update when not the owner
-      requireOwnership(req, review)
-
-      // pass the result
-      return review.updateOne(req.body.review)
+    .then(product => {
+      // add a review to the product's reviews subdocument array
+      product.reviews.push(reviewData)
+      // save the product (parent) document
+      return product.save()
     })
-    // success -> status 204
-    .then(() => res.sendStatus(204))
-    // if error
+    // respond w/ the product we created and a status code of 201 created
+    .then(product => res.sendStatustatus(201).json({ product }))
+    // if an error occurs, run the next middleware, which is the error handling
+    // middleware since it is registered last
     .catch(next)
 })
 
-router.post('/reviews', requireToken, (req, res, next) => {
-  req.body.review.owner = req.user.id
-
-  Review.create(req.body.review)
-    .then(review => {
-      res.status(201).json({ review: review.toObject() })
-    })
-    .catch(next)
-})
-
-// SHOW REVIEW
-router.get('/reviews/:id', requireToken, (req, res, next) => {
-  // req.params.id will be set based on the
-  // :id in the route
-  Review.findById(req.params.id)
-    .then(handle404)
-    // if you can find by id, respond (200)
-    // and send the client some json
-    .then(review => res.status(200).json({ review: review }))
-    // if error, pass to handler
-    .catch(next)
-})
-
-// DELETE REVIEW
 router.delete('/reviews/:id', requireToken, (req, res, next) => {
-  Review.findById(req.params.id)
+  // extract the reviewId from our route parameters (req.params)
+  const reviewId = req.params.reviewId
+
+  // extracting the productId from the incoming data (like in create)
+  const productId = req.body.review.productId
+
+  Product.findById(productId)
     .then(handle404)
-    .then(review => {
-      // throw error if they dont own review
-      requireOwnership(req, review)
-      review.deleteOne()
+    .then(product => {
+      requireOwnership()
+      // select the specific review from the reviews subdocument array then remove it
+      product.reviews.id(reviewId).remove()
+
+      // save the product with the now deleted review
+      return product.save()
     })
-    // send back (204) with no need for JSON
+    // respond with the status code 204 no content
     .then(() => res.sendStatus(204))
-    // send to error handler on errors
+    // if an error occurs, run the next middleware, which is the error handling middleware since it is registered last
+    .catch(next)
+})
+
+// update a single review
+router.patch('/reviews/:id', requireToken, removeBlanks, (req, res, next) => {
+  // extracting the reviewId from our route parameters (req.params)
+  const reviewId = req.params.reviewId
+  // extract review from the incoming data (req.body)
+  const reviewData = req.body.review
+  // extracting the productId from our review
+  const productId = reviewData.productId
+  // find the product
+  Product.findById(productId)
+    .then(handle404)
+    .then(product => {
+      requireOwnership()
+      // find the specific review in the product's reviews subdocument array
+      const review = product.reviews.id(reviewId)
+      // update the properties of the review document with the properties
+      // from reviewData
+      review.set(reviewData)
+      // save the updates to our review
+      return product.save()
+    })
+    // respond with the status code 204 no content
+    .then(() => res.sendStatus(204))
+    // if an error occurs, call the next middleware
+    // the middleware after this route's middleware, is the error handling middleware
     .catch(next)
 })
 
