@@ -86,5 +86,24 @@ router.patch('/reviews/:id', requireToken, removeBlanks, (req, res, next) => {
     // the middleware after this route's middleware, is the error handling middleware
     .catch(next)
 })
+// get a single review
+router.get('/reviews/:id', requireToken, (req, res, next) => {
+  // extracting the reviewId from our route parameters (req.params)
+  const reviewId = req.params.reviewId
+  // extracting the productId from our review
+  const productId = req.body.productId
+  // find the product
+  Product.findById(productId)
+    .then(handle404)
+    .then(product => {
+      // find the specific review in the product's reviews subdocument array
+      return product.reviews.id(reviewId)
+    })
+    // respond with the status code 204 no content
+    .then(review => res.json({ review }))
+    // if an error occurs, call the next middleware
+    // the middleware after this route's middleware, is the error handling middleware
+    .catch(next)
+})
 
 module.exports = router
