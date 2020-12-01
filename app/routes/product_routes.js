@@ -14,7 +14,7 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 router.get('/products', requireToken, (req, res, next) => {
-  Product.find({ owner: req.user._id })
+  Product.find()
     .then(products => {
       res.json({ products })
     })
