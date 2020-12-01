@@ -12,7 +12,8 @@ curl "${API}${URL_PATH}" \
     "review": {
       "head": "'"${HEAD}"'",
       "body": "'"${BODY}"'",
-      "rating": "'"${RATING}"'"
+      "rating": "'"${RATING}"'",
+      "productId": "'"${PRODUCT_ID}"'"
     }
   }'
 

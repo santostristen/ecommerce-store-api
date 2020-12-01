@@ -17,6 +17,7 @@ router.post('/reviews', requireToken, removeBlanks, (req, res, next) => {
   // extract the review from the incoming request's data (req.body)
   const reviewData = req.body.review
   // extract the product's id that we plan to add a review for
+  reviewData.owner = req.user._id
   const productId = reviewData.productId
   // Find the product document with the id of `productId`
   Product.findById(productId)
@@ -30,25 +31,25 @@ router.post('/reviews', requireToken, removeBlanks, (req, res, next) => {
       return product.save()
     })
     // respond w/ the product we created and a status code of 201 created
-    .then(product => res.sendStatustatus(201).json({ product }))
+    .then(product => res.status(201).json({ product }))
     // if an error occurs, run the next middleware, which is the error handling
     // middleware since it is registered last
     .catch(next)
 })
 
-router.delete('/reviews/:id', requireToken, (req, res, next) => {
-  // extract the reviewId from our route parameters (req.params)
-  const reviewId = req.params.reviewId
-
-  // extracting the productId from the incoming data (like in create)
-  const productId = req.body.review.productId
+router.delete('/reviews/:reviewId/:productId', requireToken, (req, res, next) => {
+  // extract the reviewId and productId from our route parameters (req.params)
+  const { reviewId, productId } = req.params
 
   Product.findById(productId)
     .then(handle404)
     .then(product => {
-      requireOwnership()
       // select the specific review from the reviews subdocument array then remove it
-      product.reviews.id(reviewId).remove()
+      const review = product.reviews.id(reviewId)
+
+      requireOwnership(req, review)
+
+      review.remove()
 
       // save the product with the now deleted review
       return product.save()
@@ -60,20 +61,18 @@ router.delete('/reviews/:id', requireToken, (req, res, next) => {
 })
 
 // update a single review
-router.patch('/reviews/:id', requireToken, removeBlanks, (req, res, next) => {
-  // extracting the reviewId from our route parameters (req.params)
-  const reviewId = req.params.reviewId
+router.patch('/reviews/:reviewId/:productId', requireToken, removeBlanks, (req, res, next) => {
+  // extracting the reviewId and productId from our route parameters (req.params)
+  const { reviewId, productId } = req.params
   // extract review from the incoming data (req.body)
   const reviewData = req.body.review
-  // extracting the productId from our review
-  const productId = reviewData.productId
   // find the product
   Product.findById(productId)
     .then(handle404)
     .then(product => {
-      requireOwnership()
       // find the specific review in the product's reviews subdocument array
       const review = product.reviews.id(reviewId)
+      requireOwnership(req, review)
       // update the properties of the review document with the properties
       // from reviewData
       review.set(reviewData)
@@ -82,6 +81,24 @@ router.patch('/reviews/:id', requireToken, removeBlanks, (req, res, next) => {
     })
     // respond with the status code 204 no content
     .then(() => res.sendStatus(204))
+    // if an error occurs, call the next middleware
+    // the middleware after this route's middleware, is the error handling middleware
+    .catch(next)
+})
+// get a single review
+router.get('/reviews/:reviewId/:productId', requireToken, (req, res, next) => {
+  // extracting the reviewId and productId from our route parameters (req.params)
+  const { reviewId, productId } = req.params
+
+  // find the product
+  Product.findById(productId)
+    .then(handle404)
+    .then(product => {
+      // find the specific review in the product's reviews subdocument array
+      return product.reviews.id(reviewId)
+    })
+    // respond with the status code 204 no content
+    .then(review => res.json({ review }))
     // if an error occurs, call the next middleware
     // the middleware after this route's middleware, is the error handling middleware
     .catch(next)
