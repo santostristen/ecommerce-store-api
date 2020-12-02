@@ -76,24 +76,7 @@ app.use(reviewRoutes)
 // passed any error messages from them
 app.use(errorHandler)
 app.post('/create-checkout-session', async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'Meme'
-          },
-          unit_amount: 2000
-        },
-        quantity: 1
-      }
-    ],
-    mode: 'payment',
-    success_url: 'http://localhost:7165/#/cart',
-    cancel_url: 'http://localhost:7165/#/cart'
-  })
+  const session = await stripe.checkout.sessions.create(req.body)
 
   res.json({ id: session.id })
 })
