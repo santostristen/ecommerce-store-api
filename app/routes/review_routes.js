@@ -13,12 +13,12 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
-router.post('/reviews', requireToken, removeBlanks, (req, res, next) => {
+router.post('/reviews/:productId', requireToken, (req, res, next) => {
   // extract the review from the incoming request's data (req.body)
   const reviewData = req.body.review
   // extract the product's id that we plan to add a review for
   reviewData.owner = req.user._id
-  const productId = reviewData.productId
+  const productId = req.params.productId
   // Find the product document with the id of `productId`
   Product.findById(productId)
     // throw (cause) a new DocumentNotFoundError to occur, if we couldn't find
