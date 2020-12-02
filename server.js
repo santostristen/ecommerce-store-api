@@ -2,6 +2,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const stripe = require('stripe')('sk_test_51HtJM1Kr9AmqVFZOgqLtscZVXZXctSVmyI8dncemfKKMywFTeSnmUQxpQ3IZOq8MFHnqhD4DKgWQypFtBkHHsiB400kaU5TDAG')
 
 // require route files
 const exampleRoutes = require('./app/routes/example_routes')
@@ -74,6 +75,28 @@ app.use(reviewRoutes)
 // note that this comes after the route middlewares, because it needs to be
 // passed any error messages from them
 app.use(errorHandler)
+app.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Meme'
+          },
+          unit_amount: 2000
+        },
+        quantity: 1
+      }
+    ],
+    mode: 'payment',
+    success_url: 'http://localhost:7165/#/cart',
+    cancel_url: 'http://localhost:7165/#/cart'
+  })
+
+  res.json({ id: session.id })
+})
 
 // run API on designated port (4741 in this case)
 app.listen(port, () => {
