@@ -21,6 +21,11 @@ Scrum Master - Alex
 Planning/process/problem-solving strategy:
  Our planning was very fluid. We collectively broke down each prompt at the beginning and engaged each others interest for each in relation to how useful we thought it would be in the real world. We landed on the e-commerce store. Similar to project two, we wanted to complete the back end code first (for the most part) before tackling the front end in an attempt to simplify debugging and testing later. Each of us took either a schema and/or route, we later added two more schemas in similar fashion, and committed to github on the first day. After creating a repo for the front end we tried to deploy having issues with heroku. The second and third day, we separated the front end equally CRUDing the three resources with Tavish signing off on each of our codes before moving on. We worked as a team when problem-solving, debugging and testing with 4 sets of eyes on the code every day. This allowed us to correct syntax errors more rapidly but most importantly gave everyone a chance to share their thoughts on what the solution might be. Nick and Tristen took reigns connecting the store with Stripe. Our daily process, led by Alex, started with a recap on what we did the day prior and what we needed to do for that day. We typically tried to break the day into two parts (miniSprints), hopefully having something to cheer about over lunch and EOB. We tried to take mental breaks every 1-2 hours and get walk away from the screen. The team collaborated very well and everyone had a good amount of input.
 
+Grow:
+Taking more time at the very beginning to think through a lot of the issues we encountered. We tended to go back and forth to solve our issues towards the end, playing with the code instead of using algorithms. This could have been prevented with more upfront planning. Also our inexperience is a big factor and not fully understanding how everything works leading to us not properly structuring the project from the beginning. 
+
+Glow:
+Great collaboration, learned a lot through this process and how coding works within a team setting. 
 
 WireFrames:
 https://imgur.com/gallery/bOSaou9
