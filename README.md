@@ -39,7 +39,7 @@ JavaScript, React, Stripe, Express, MongoDB, Heroku, Mongoose
 
 List of Unsolved Problems:
 
-Styling, passing form data to Stripe, successfully deploy the full site, building a search feature for specific items
+Styling, passing form data to Stripe, building a search feature for specific items
 
 User Stories:
 As an unregistered user, I would like to sign up with email and password so that I can upload items for sale.
