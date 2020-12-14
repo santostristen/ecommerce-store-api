@@ -103,7 +103,7 @@ router.delete('/retailers/:id', requireToken, (req, res, next) => {
       // throw an error if current user doesn't own `Retailer`
       requireOwnership(req, retailer)
       // delete the Retailer ONLY IF the above didn't throw
-      Retailer.deleteOne()
+      retailer.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
