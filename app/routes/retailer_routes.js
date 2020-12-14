@@ -47,7 +47,7 @@ router.get('/retailers', requireToken, (req, res, next) => {
 // GET /Retailers/5a7db6c74d55bc51bdf39793
 router.get('/retailers/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  retailer.findById(req.params.id)
+  Retailer.findById(req.params.id)
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "Retailer" JSON
     .then(retailer => res.status(200).json({ retailer: retailer.toObject() }))
@@ -96,7 +96,6 @@ router.patch('/retailers/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /Retailers/5a7db6c74d55bc51bdf39793
 router.delete('/retailers/:id', requireToken, (req, res, next) => {
   Retailer.findById(req.params.id)
     .then(handle404)
@@ -104,7 +103,7 @@ router.delete('/retailers/:id', requireToken, (req, res, next) => {
       // throw an error if current user doesn't own `Retailer`
       requireOwnership(req, retailer)
       // delete the Retailer ONLY IF the above didn't throw
-      Retailer.deleteOne()
+      retailer.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
